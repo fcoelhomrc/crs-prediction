@@ -1,0 +1,35 @@
+# MLP clinical features classifier -- default configuration
+#
+# Usage:
+#   uv run crs-train-mlp --config configs/mlp.yaml
+
+# --- Data ---
+train_paths: "inputs/json/ieo_train.json"
+val_paths: "inputs/json/ieo_val.json"
+test_paths: "inputs/json/ieo_test.json"
+excluded_years: []
+
+# --- Features ---
+use_volume: true
+use_age: true
+use_ca125: true
+
+# --- Model ---
+hidden_dims: [32, 16, 8]
+dropout: 0.10
+
+# --- Training ---
+batch_size: 4
+epochs: 1000
+learning_rate: 0.001
+weight_decay: 0.001
+loss_function: "WBCE"
+
+# --- Scheduler ---
+scheduler_patience: 200
+
+# --- Early stopping ---
+early_stopping_patience: 800
+
+# --- Disease sites ---
+disease_sites: "om"

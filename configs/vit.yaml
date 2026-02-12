@@ -1,0 +1,50 @@
+# ViT-based CRS classifier -- default configuration
+#
+# Usage:
+#   uv run crs-train --config configs/vit.yaml
+
+# --- Data ---
+train_paths: "inputs/json/ieo_train.json"
+val_paths: "inputs/json/ieo_val.json"
+test_paths: "inputs/json/ieo_test.json"
+excluded_years: []
+
+# --- Feature extractor ---
+# Options: google-16, google-32, dinov2-small, dinov2-base
+feature_extractor: "google-32"
+
+# --- Clinical features ---
+clinical_features: true
+clinical_input_dim: 3 # tumor_volume, age, ca125
+clinical_encoding_dim: 16
+
+# --- Model ---
+num_heads: 1
+dropout: 0.15
+attention_resc: 1
+
+# --- Training ---
+batch_size: 2
+epochs: 100
+learning_rate: 0.0001
+weight_decay: 0.01
+loss_function: "WBCE" # BCE or WBCE (weighted)
+accumulation_steps: 1
+
+# --- Scheduler ---
+scheduler_type: "cosine" # cosine or step
+scheduler_patience: 10
+scheduler_step: 4
+scheduler_gamma: 0.5
+warmup_steps: 100
+
+# --- Early stopping ---
+early_stopping_patience: 25
+
+# --- Data loading ---
+# false = lazy (load volumes on demand), true = eager (preload all into memory)
+eager_loading: false
+
+# --- Disease sites ---
+# om, pod_om, abdominal_lesions, lymph_nodes, all
+disease_sites: "om"

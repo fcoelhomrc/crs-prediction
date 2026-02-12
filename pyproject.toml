@@ -1,0 +1,55 @@
+[project]
+name = "crs-prediction"
+version = "0.1.0"
+description = "CRS prediction from CT segmentation masks using ViT attention pooling and clinical features"
+readme = "README.md"
+authors = [
+    { name = "Felipe Coutinho", email = "fcoelho.mrc@gmail.com" },
+    { name = "Francesca Fati", email = "francesca.fati@polimi.it"},
+]
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.10.0",
+    "nibabel>=5.3.0",
+    "numpy>=2.0.0",
+    "openpyxl>=3.1.5",
+    "pandas>=2.2.0",
+    "pyyaml>=6.0.0",
+    "rich>=14.0.0",
+    "scikit-learn>=1.5.0",
+    "scipy>=1.14.0",
+    "torch>=2.4.0",
+    "transformers>=4.45.0",
+    "wandb>=0.18.0",
+]
+
+[project.scripts]
+crs-train = "crs_prediction.scripts.train:main"
+crs-train-mlp = "crs_prediction.scripts.train_mlp:main"
+crs-test = "crs_prediction.scripts.test:main"
+crs-sweep = "crs_prediction.scripts.sweep:main"
+crs-analyze = "crs_prediction.scripts.analyze_predictions:main"
+crs-sklearn-ablation = "crs_prediction.scripts.run_sklearn_ablation:main"
+crs-mlp-ablation = "crs_prediction.scripts.run_mlp_ablation:main"
+crs-ablation-analysis = "crs_prediction.scripts.run_ablation_analysis:main"
+crs-create-neov-json = "crs_prediction.scripts.create_neov_json:main"
+
+[build-system]
+requires = ["uv_build>=0.10.0,<0.11.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu", marker = "sys_platform != 'linux'" },
+  { index = "pytorch-cu128", marker = "sys_platform == 'linux'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true

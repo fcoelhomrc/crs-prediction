@@ -1,0 +1,28 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Data symlinks and contents (keep the directories themselves)
+inputs/*
+!inputs/.gitkeep
+!inputs/json/
+
+# Outputs
+outputs/*
+!outputs/.gitkeep
+
+# Training artifacts
+models/
+test/
+wandb/
+.temp/
+
+# OS
+.DS_Store
