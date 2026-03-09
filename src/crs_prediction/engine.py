@@ -146,11 +146,11 @@ class Engine:
             wandb.define_metric("hyperp", step_metric="batch")
 
     def _compute_pos_weight(self):
+        dataset = self.train_loader.dataset
         all_labels = []
-        for batch in self.train_loader:
-            labels = batch["label"]
-            binary_labels = (labels[:, 1] > 0.5).cpu().numpy()
-            all_labels.extend(binary_labels)
+        for patient in dataset.data:
+            label_val = patient.label.item()
+            all_labels.append(1 if label_val >= 1 else 0)
         labels_array = np.array(all_labels)
         class_counts = np.bincount(labels_array.astype(int), minlength=2)
         class_counts = np.maximum(class_counts, 1e-8)
@@ -549,10 +549,11 @@ class MLPEngine:
         self.best_val_f1 = 0.0
 
     def _compute_pos_weight(self) -> torch.Tensor:
+        dataset = self.train_loader.dataset
         all_labels = []
-        for batch in self.train_loader:
-            labels = batch["label"][:, 1].numpy()
-            all_labels.extend(labels)
+        for patient in dataset.data:
+            label_val = patient.label.item()
+            all_labels.append(1 if label_val >= 1 else 0)
         labels_array = np.array(all_labels)
         class_counts = np.bincount(labels_array.astype(int), minlength=2)
         class_counts = np.maximum(class_counts, 1e-8)
