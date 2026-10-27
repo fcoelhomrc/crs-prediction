@@ -1,6 +1,41 @@
 # CRS Prediction
 
-Predicting Chemotherapy Response Score (CRS) from pre-treatment CT segmentation masks using ViT-based attention pooling, with optional clinical features (age, CA-125, tumor volume).
+Predicting how a patient with high-grade serous ovarian cancer will respond to
+chemotherapy, from the CT scan taken before treatment starts. The target is the
+Chemotherapy Response Score (CRS), which a pathologist grades on the omentum
+removed at surgery, after chemotherapy is over. This is the code behind
+*Vision Transformers for Preoperative CT-Based Prediction of Histopathologic
+Chemotherapy Response Score in High-Grade Serous Ovarian Carcinoma* (IJCARS,
+2026).
+
+## The question
+
+CRS is only known once treatment is done and the tissue is out. If the scan
+taken at diagnosis already carries a signal about response, that information
+arrives months earlier, when it can still inform treatment planning. The
+cohorts are small, a few hundred patients, so the model leans on pretrained
+image features instead of learning them from scratch.
+
+## How it works
+
+<p align="center">
+  <img alt="Imaging and clinical branches fused by an MLP head to predict CRS" src="docs/architecture.svg">
+</p>
+
+The diagram is generated from [`docs/architecture.d2`](docs/architecture.d2)
+with [D2](https://d2lang.com); the render command is in the header of that
+file.
+
+| Piece | What it is |
+|---|---|
+| Segmentation | OVSeg masks of the disease sites; the omentum is used by default |
+| Image features | A frozen ViT (Google ViT-B/16 or B/32) or DINOv2 encodes each of 256 axial slices, resampled to 224 × 224 |
+| Pooling | Attention across slices, so the model weighs the slices that matter |
+| Clinical branch | Tumor volume computed from the mask, plus age and CA-125, through a small encoder |
+| Head | An MLP over the pooled image features and the clinical encoding |
+| Baselines | Logistic regression, random forest, SVM, gradient boosting and an MLP on the clinical features alone, over every feature combination |
+| Evaluation | Held-out IEO test split and the external NEOV cohort, each with 1000 bootstrap resamples for confidence intervals |
+| Tooling | PyTorch, Hugging Face Transformers, Weights & Biases sweeps, Nix and uv |
 
 ## Setup
 

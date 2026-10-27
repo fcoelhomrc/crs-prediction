@@ -1,0 +1,37 @@
+# Render: d2 --sketch --pad 40 docs/architecture.d2 docs/architecture.svg
+grid-rows: 3
+grid-columns: 4
+grid-gap: 90
+
+classes: {
+  box: {style: {stroke-width: 2; border-radius: 6; font-size: 22; fill: white}}
+  data: {shape: page; style: {font-size: 22}}
+  frozen: {style: {fill: "#e3f2fd"; stroke: "#1e88e5"; stroke-width: 2; border-radius: 6; font-size: 22}}
+  trained: {style: {fill: "#fdebdd"; stroke: "#e67e22"; stroke-width: 2; border-radius: 6; font-size: 22}}
+  blank: {label: ""; style: {opacity: 0}}
+}
+
+ct: Pre-treatment CT {class: data}
+ovseg: OVSeg\nomentum mask {class: box}
+vit: ViT / DINOv2\nfrozen, 256 slices {class: frozen}
+pool: Attention pooling\nacross slices {class: trained}
+
+b1 {class: blank}
+volume: Tumor volume {class: box}
+enc: Clinical encoder {class: trained}
+head: MLP head {class: trained}
+
+b2 {class: blank}
+b3 {class: blank}
+clinical: Age · CA-125 {class: data}
+out: Chemotherapy\nresponse (CRS) {class: box}
+
+ct -> ovseg
+ovseg -> vit
+vit -> pool
+ovseg -> volume
+volume -> enc
+clinical -> enc
+pool -> head
+enc -> head
+head -> out
